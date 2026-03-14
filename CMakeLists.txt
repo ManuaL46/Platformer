@@ -8,6 +8,8 @@ project(Platformer
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED 23)
 
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+
 # Disable Shared Libs
 set(BUILD_SHARED_LIBS OFF)
 set(SDL_SHARED OFF)
@@ -24,5 +26,9 @@ FetchContent_MakeAvailable(SDL3)
 
 add_executable(platformer_sdl)
 
-target_sources(platformer_sdl PRIVATE src/main.cpp)
+target_sources(platformer_sdl PRIVATE
+  src/main.cpp
+  src/init.hpp
+  src/init.cpp
+)
 target_link_libraries(platformer_sdl PRIVATE SDL3::SDL3)
