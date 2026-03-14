@@ -1,5 +1,5 @@
 
-#include "init.hpp"
+#include "appmgr.hpp"
 
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_log.h"
@@ -7,14 +7,16 @@
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_video.h"
 
-ApplicationManager::ApplicationManager() {}
+#define DEFAULT_WIDTH 1280
+#define DEFAULT_HEIGHT 720
 
-ApplicationManager::~ApplicationManager() {
-  if (m_init && m_app_renderer && m_app_window) {
-    SDL_DestroyRenderer(m_app_renderer);
-    SDL_DestroyWindow(m_app_window);
-  }
-}
+ApplicationManager::ApplicationManager()
+    : m_app_window(nullptr),
+      m_app_renderer(nullptr),
+      m_height(DEFAULT_HEIGHT),
+      m_width(DEFAULT_WIDTH) {};
+
+ApplicationManager::~ApplicationManager() { CleanUp(); }
 
 SDL_AppResult ApplicationManager::AppInit() {
   if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
@@ -39,6 +41,7 @@ SDL_AppResult ApplicationManager::AppInit() {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                  "Failed to render logical presentation!");
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s", SDL_GetError());
+    CleanUp();
     return SDL_APP_FAILURE;
   }
 
@@ -48,19 +51,23 @@ SDL_AppResult ApplicationManager::AppInit() {
                                SDL_MESSAGEBOX_COLOR_BACKGROUND,
                            "Platformer", "Hello World!", m_app_window);
 
-  m_init = true;
   return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult ApplicationManager::AppIterate() const {
-  if (!m_init) return SDL_APP_FAILURE;
   return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult ApplicationManager::AppEvents(SDL_Event* event) const {
-  if (!m_init) return SDL_APP_FAILURE;
   if (event->type == SDL_EVENT_QUIT) return SDL_APP_SUCCESS;
   return SDL_APP_CONTINUE;
+}
+
+void ApplicationManager::CleanUp() {
+  if (m_app_renderer && m_app_window) {
+    SDL_DestroyRenderer(m_app_renderer);
+    SDL_DestroyWindow(m_app_window);
+  }
 }
 
 SDL_AppResult ApplicationManager::AppQuit() {

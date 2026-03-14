@@ -28,7 +28,7 @@ add_executable(platformer_sdl)
 
 target_sources(platformer_sdl PRIVATE
   src/main.cpp
-  src/init.hpp
-  src/init.cpp
+  src/appmgr.hpp
+  src/appmgr.cpp
 )
 target_link_libraries(platformer_sdl PRIVATE SDL3::SDL3)
